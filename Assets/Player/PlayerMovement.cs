@@ -1,19 +1,21 @@
 using System;
 using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
+using UnityEngine.AI;
 
-[RequireComponent(typeof (ThirdPersonCharacter))]
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(AICharacterControl))]
+[RequireComponent(typeof(ThirdPersonCharacter))]
 public class PlayerMovement : MonoBehaviour
 {
-
-    
-
-    [SerializeField] float walkMoveStopRadius = 0.2f;
-    [SerializeField] float attackMoveStopRadius = 5f;
-
-    ThirdPersonCharacter thirdPersonCharacter;   // A reference to the ThirdPersonCharacter on the object
-    CameraRaycaster cameraRaycaster;
+    ThirdPersonCharacter thirdPersonCharacter = null;   // A reference to the ThirdPersonCharacter on the object
+    CameraRaycaster cameraRaycaster = null;
     Vector3 currentDestination, clickPoint;
+    AICharacterControl aiCharacterControl = null;
+    GameObject walkTarget = null;
+
+    [SerializeField] const int walkableLayerNumber = 8;
+    [SerializeField] const int enemyLayerNumber = 9;
 
     private bool isInDirectMode = false; //TODO consider making static?
 
@@ -22,64 +24,29 @@ public class PlayerMovement : MonoBehaviour
         cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
         thirdPersonCharacter = GetComponent<ThirdPersonCharacter>();
         currentDestination = transform.position;
+        aiCharacterControl = GetComponent<AICharacterControl>();
+        walkTarget = new GameObject("walkTarget");
+
+        cameraRaycaster.notifyMouseClickObservers += ProcessMouseClick;
     }
 
-    // Fixed update is called in sync with physics
-    private void FixedUpdate()
+    void ProcessMouseClick(RaycastHit raycastHit, int layerHit)
     {
-        if(Input.GetKeyDown(KeyCode.G)) //G for gamepad
+        switch (layerHit)
         {
-            //toggle boolean on and off with G key
-            isInDirectMode = !isInDirectMode;
-            currentDestination = transform.position; // clear the click target
+            case enemyLayerNumber:
+                GameObject enemy = raycastHit.collider.gameObject;
+                aiCharacterControl.SetTarget(enemy.transform);
+                break;
+            case walkableLayerNumber:
+                walkTarget.transform.position = raycastHit.point;
+                aiCharacterControl.SetTarget(walkTarget.transform);
+                break;
+            default:
+                Debug.LogWarning("Do not know how to handle mouse click for Playermovement.cs");
+                return;
         }
 
-        if(isInDirectMode)
-        {
-            ProcessDirectMovement();
-        }
-        else
-        {
-            ProcessMouseMovement();
-        }
-    }
-
-    //determine if layer is moveable, and move player
-    private void ProcessMouseMovement()
-    {
-        if (Input.GetMouseButton(0))
-        {
-            clickPoint = cameraRaycaster.hit.point;
-
-            switch (cameraRaycaster.currentLayerHit)
-            {
-                case Layer.Walkable:
-                    currentDestination = ShortDestination(clickPoint, walkMoveStopRadius);
-                    break;
-                case Layer.Enemy:
-                    currentDestination = ShortDestination(clickPoint, attackMoveStopRadius);
-                    break;
-                case Layer.RaycastEndStop:
-                    break;
-                default:
-                    print("shouldnt be here playermovement.cs");
-                    return;
-            }
-        }
-        WalkToDestination();
-    }
-
-    private void WalkToDestination()
-    {
-        var playerToClickPoint = currentDestination - transform.position;
-        if (playerToClickPoint.magnitude >= walkMoveStopRadius)
-        {
-            thirdPersonCharacter.Move(playerToClickPoint, false, false);
-        }
-        else
-        {
-            thirdPersonCharacter.Move(Vector3.zero, false, false);
-        }
     }
 
     //control player movement for gamepad
@@ -94,23 +61,6 @@ public class PlayerMovement : MonoBehaviour
 
         thirdPersonCharacter.Move(m_Move, false, false);
 
-    }
-
-    Vector3 ShortDestination(Vector3 destination, float shortening)
-    {
-        Vector3 reductionVector = (destination - transform.position).normalized * shortening;
-        return destination - reductionVector;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.black;
-        Gizmos.DrawLine(transform.position, clickPoint);
-        Gizmos.DrawSphere(currentDestination, 0.15f);
-        Gizmos.DrawSphere(clickPoint, 0.1f);
-        //draw attack sphere
-        Gizmos.color = new Color(255f, 0f, 0, .5f);
-        Gizmos.DrawWireSphere(transform.position, attackMoveStopRadius);
     }
 }
 
