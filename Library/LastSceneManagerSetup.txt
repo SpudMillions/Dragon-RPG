@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/JAA Village.unity
+- path: Assets/Scenes/Combat Sandbox 2.unity
   isLoaded: 1
   isActive: 1
