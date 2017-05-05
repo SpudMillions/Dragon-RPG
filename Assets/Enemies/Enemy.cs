@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : MonoBehaviour, IDamageable {
 
     [SerializeField] float maxHealthPoints = 100f;
     [SerializeField] float attackRadius = 4f;
+    [SerializeField] float chaseRadius = 6f;
 
     float currentHealthPoints = 100f;
     AICharacterControl aiCharacterControl = null;
@@ -20,6 +21,11 @@ public class Enemy : MonoBehaviour {
         }
     }
 
+    public void TakeDamage(float damage)
+    {
+        currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
+    }
+
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -30,7 +36,14 @@ public class Enemy : MonoBehaviour {
     {
         float distanceToPlayer = Vector3.Distance(player.transform.position, transform.position);
 
+        //attack player once inside attackradius
         if(distanceToPlayer <= attackRadius)
+        {
+            
+        }
+
+        //move enemy to player, when they are in radius
+        if (distanceToPlayer <= chaseRadius)
         {
             aiCharacterControl.SetTarget(player.transform);
         }
@@ -39,4 +52,15 @@ public class Enemy : MonoBehaviour {
             aiCharacterControl.SetTarget(transform);
         }
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(255f, 0f, 0, .5f);
+        Gizmos.DrawWireSphere(transform.position, attackRadius);
+
+        Gizmos.color = new Color(0f, 0f, 255, .5f);
+        Gizmos.DrawWireSphere(transform.position, chaseRadius);
+
+    }
+
 }
