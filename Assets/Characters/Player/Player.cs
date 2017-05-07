@@ -1,56 +1,74 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class Player : MonoBehaviour, IDamageable {
 
-    [SerializeField] float maxHealthPoints = 100f;
     [SerializeField] int enemyLayer = 9;
+    [SerializeField] float maxHealthPoints = 100f;
     [SerializeField] float damagePerHit = 10f;
     [SerializeField] float minTimeBetweenHits = .5f;
     [SerializeField] float maxAttackRange = 2f;
-    GameObject currentTarget;
-    CameraRaycaster cameraRayCaster;
-    float lastHitTime = 0f;
+    [SerializeField] Weapon weaponInUse;
 
     float currentHealthPoints;
+    CameraRaycaster cameraRaycaster;
+    float lastHitTime = 0f;
 
-	public float healthAsPercentage
-    {
-        get
-        {
-            return currentHealthPoints / maxHealthPoints;
-        }
-    }
+    public float healthAsPercentage { get { return currentHealthPoints / maxHealthPoints; }}
 
-    private void Start()
+    void Start()
     {
-        cameraRayCaster = FindObjectOfType<CameraRaycaster>();
-        cameraRayCaster.notifyMouseClickObservers += OnMouseClicked;
+        RegisterForMouseClick();
         currentHealthPoints = maxHealthPoints;
+        PutWeaponInHand();
     }
 
-    void OnMouseClicked(RaycastHit raycastHit, int layerHit)
+    private void PutWeaponInHand()
     {
-        if(layerHit == enemyLayer)
+        var weaponPrefab = weaponInUse.GetWeaponPrefab();
+        GameObject dominantHand = RequestDominantHand();
+        var weapon = Instantiate(weaponPrefab, dominantHand.transform);
+        weapon.transform.localPosition = weaponInUse.gripTransform.localPosition;
+        weapon.transform.localRotation = weaponInUse.gripTransform.localRotation;
+    }
+
+    private GameObject RequestDominantHand()
+    {
+        var dominantHands = GetComponentsInChildren<DominantHand>();
+        int numberOfDominantHands = dominantHands.Length;
+        Assert.IsFalse(numberOfDominantHands <= 0, "No DominantHand found on Player, please add one");
+        Assert.IsFalse(numberOfDominantHands >  1, "Multiple DominantHand scripts on Player, please remove one");
+        return dominantHands[0].gameObject;
+    }
+
+    private void RegisterForMouseClick()
+    {
+        cameraRaycaster = FindObjectOfType<CameraRaycaster>();
+        cameraRaycaster.notifyMouseClickObservers += OnMouseClick;
+    }
+
+    // TODO refactor to reduce number of lines
+    void OnMouseClick(RaycastHit raycastHit, int layerHit)
+    {
+        if (layerHit == enemyLayer)
         {
             var enemy = raycastHit.collider.gameObject;
-
-            //check if enemy is in range
-            if((enemy.transform.position - transform.position).magnitude > maxAttackRange)
+             
+            // Check enemy is in range 
+            if ((enemy.transform.position - transform.position).magnitude > maxAttackRange)
             {
                 return;
             }
 
-            currentTarget = enemy;
-
             var enemyComponent = enemy.GetComponent<Enemy>();
-            if(Time.time - lastHitTime > minTimeBetweenHits)
+            if (Time.time - lastHitTime > minTimeBetweenHits)
             {
                 enemyComponent.TakeDamage(damagePerHit);
                 lastHitTime = Time.time;
             }
-
         }
     }
 

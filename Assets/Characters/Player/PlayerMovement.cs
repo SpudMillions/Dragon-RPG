@@ -5,62 +5,62 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(AICharacterControl))]
-[RequireComponent(typeof(ThirdPersonCharacter))]
+[RequireComponent(typeof (ThirdPersonCharacter))]
 public class PlayerMovement : MonoBehaviour
 {
     ThirdPersonCharacter thirdPersonCharacter = null;   // A reference to the ThirdPersonCharacter on the object
     CameraRaycaster cameraRaycaster = null;
-    Vector3 currentDestination, clickPoint;
+    Vector3 clickPoint;
     AICharacterControl aiCharacterControl = null;
     GameObject walkTarget = null;
 
+    // TODO solve fight between serialize and const
     [SerializeField] const int walkableLayerNumber = 8;
     [SerializeField] const int enemyLayerNumber = 9;
 
-    private bool isInDirectMode = false; //TODO consider making static?
+    bool isInDirectMode = false;
 
-    private void Start()
+    void Start()
     {
         cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
         thirdPersonCharacter = GetComponent<ThirdPersonCharacter>();
-        currentDestination = transform.position;
         aiCharacterControl = GetComponent<AICharacterControl>();
         walkTarget = new GameObject("walkTarget");
 
         cameraRaycaster.notifyMouseClickObservers += ProcessMouseClick;
     }
 
+
     void ProcessMouseClick(RaycastHit raycastHit, int layerHit)
     {
         switch (layerHit)
         {
             case enemyLayerNumber:
+                // navigate to the enemy
                 GameObject enemy = raycastHit.collider.gameObject;
                 aiCharacterControl.SetTarget(enemy.transform);
                 break;
             case walkableLayerNumber:
+                // navigate to point on the ground
                 walkTarget.transform.position = raycastHit.point;
                 aiCharacterControl.SetTarget(walkTarget.transform);
                 break;
             default:
-                Debug.LogWarning("Do not know how to handle mouse click for Playermovement.cs");
+                Debug.LogWarning("Don't know how to handle mouse click for player movement");
                 return;
         }
-
     }
 
-    //control player movement for gamepad
-    private void ProcessDirectMovement()
+    // TODO make this get called again
+    void ProcessDirectMovement()
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
+        
+        // calculate camera relative direction to move:
+        Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+        Vector3 movement = v * cameraForward + h * Camera.main.transform.right;
 
-        //calculate camera relative direction to move:
-        Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
-        Vector3 m_Move = v * m_CamForward + h * Camera.main.transform.right;
-
-        thirdPersonCharacter.Move(m_Move, false, false);
-
+        thirdPersonCharacter.Move(movement, false, false);
     }
 }
-

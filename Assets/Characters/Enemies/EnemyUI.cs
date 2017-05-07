@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+// Add a UI Socket transform to your enemy
+// Attach this script to the socket
+// Link to a canvas prefab
 public class EnemyUI : MonoBehaviour {
 
     // Works around Unity 5.5's lack of nested prefabs
