@@ -90,6 +90,7 @@
     <Compile Include="Assets\_Characters\Player\PlayerHealthBar.cs" />
     <Compile Include="Assets\_Characters\Player\PlayerMovement.cs" />
     <Compile Include="Assets\_Characters\ThirdPersonCharacter.cs" />
+    <Compile Include="Assets\_Core\AudioTrigger.cs" />
     <Compile Include="Assets\_Core\IDamageable.cs" />
     <Compile Include="Assets\_Core\SpinMe.cs" />
     <Compile Include="Assets\_Environment\Water\Scripts\Displace.cs" />
