@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-// TODO consider rewiring
-using RPG.CameraUI; 
+
+// TODO consider re-wire...
+using RPG.CameraUI;
 using RPG.Core;
-using RPG.Weapons; 
+using RPG.Weapons;
 
 namespace RPG.Characters
 {
     public class Player : MonoBehaviour, IDamageable
     {
-
         [SerializeField] int enemyLayer = 9;
         [SerializeField] float maxHealthPoints = 100f;
         [SerializeField] float damagePerHit = 10f;
@@ -26,17 +26,17 @@ namespace RPG.Characters
 
         public float healthAsPercentage { get { return currentHealthPoints / maxHealthPoints; } }
 
-        public void TakeDamage(float damage)
-        {
-            currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
-        }
-
         void Start()
         {
             RegisterForMouseClick();
             SetCurrentMaxHealth();
             PutWeaponInHand();
             SetupRuntimeAnimator();
+        }
+
+        public void TakeDamage(float damage)
+        {
+            currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
         }
 
         private void SetCurrentMaxHealth()
@@ -48,7 +48,7 @@ namespace RPG.Characters
         {
             animator = GetComponent<Animator>();
             animator.runtimeAnimatorController = animatorOverrideController;
-            animatorOverrideController["DEFAULT ATTACK"] = weaponInUse.GetAttackAnimClip();
+            animatorOverrideController["DEFAULT ATTACK"] = weaponInUse.GetAttackAnimClip(); // remove const
         }
 
         private void PutWeaponInHand()
@@ -75,14 +75,12 @@ namespace RPG.Characters
             cameraRaycaster.notifyMouseClickObservers += OnMouseClick;
         }
 
-        // TODO refactor to reduce number of lines
         void OnMouseClick(RaycastHit raycastHit, int layerHit)
         {
             if (layerHit == enemyLayer)
             {
                 var enemy = raycastHit.collider.gameObject;
-
-                if(IsTargetInRange(enemy))
+                if (IsTargetInRange(enemy))
                 {
                     AttackTarget(enemy);
                 }
@@ -94,7 +92,7 @@ namespace RPG.Characters
             var enemyComponent = target.GetComponent<Enemy>();
             if (Time.time - lastHitTime > weaponInUse.GetMinTimeBetweenHits())
             {
-                animator.SetTrigger("Attack"); //TODO set const
+                animator.SetTrigger("Attack"); // TODO make const
                 enemyComponent.TakeDamage(damagePerHit);
                 lastHitTime = Time.time;
             }

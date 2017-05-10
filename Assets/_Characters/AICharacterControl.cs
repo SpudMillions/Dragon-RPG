@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+// TODO change to RPG.Characters namespace
 namespace UnityStandardAssets.Characters.ThirdPerson
 {
     [RequireComponent(typeof (UnityEngine.AI.NavMeshAgent))]

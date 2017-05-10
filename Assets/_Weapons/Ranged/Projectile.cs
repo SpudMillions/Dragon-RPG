@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// TODO consider rewiring
+
+// TODO consider re-wire
 using RPG.Core;
 
 namespace RPG.Weapons
 {
     public class Projectile : MonoBehaviour
     {
-
         [SerializeField] float projectileSpeed;
         [SerializeField] GameObject shooter; // So can inspected when paused
 
