@@ -15,7 +15,7 @@ namespace RPG.Characters
         CameraRaycaster cameraRaycaster = null;
         Vector3 clickPoint;
         AICharacterControl aiCharacterControl = null;
-        GameObject walkTarget = null;
+        public GameObject walkTarget = null;
 
         // TODO solve fight between serialize and const
         [SerializeField] const int walkableLayerNumber = 8;
