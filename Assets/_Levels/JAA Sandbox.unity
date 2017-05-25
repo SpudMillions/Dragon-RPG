@@ -9466,39 +9466,39 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4790372647055360, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 7
+      value: 5.36
       objectReference: {fileID: 0}
     - target: {fileID: 4790372647055360, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4790372647055360, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -7
+      value: -5.1
       objectReference: {fileID: 0}
     - target: {fileID: 4790372647055360, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
       propertyPath: m_LocalRotation.x
-      value: 0.33860296
+      value: 0.33327037
       objectReference: {fileID: 0}
     - target: {fileID: 4790372647055360, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
       propertyPath: m_LocalRotation.y
-      value: -0.3560554
+      value: -0.36188993
       objectReference: {fileID: 0}
     - target: {fileID: 4790372647055360, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
       propertyPath: m_LocalRotation.z
-      value: 0.14025393
+      value: 0.14036779
       objectReference: {fileID: 0}
     - target: {fileID: 4790372647055360, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
       propertyPath: m_LocalRotation.w
-      value: 0.8595938
+      value: 0.85922265
       objectReference: {fileID: 0}
     - target: {fileID: 4790372647055360, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 43
+      value: 42.4
       objectReference: {fileID: 0}
     - target: {fileID: 4790372647055360, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -45
+      value: -45.68
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ef5f0307231176944ab46cd8697a6417, type: 2}
