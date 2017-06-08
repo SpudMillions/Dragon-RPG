@@ -17,10 +17,6 @@ namespace RPG.Characters
         AICharacterControl aiCharacterControl = null;
         public GameObject walkTarget = null;
 
-        // TODO solve fight between serialize and const
-        [SerializeField] const int walkableLayerNumber = 8;
-        [SerializeField] const int enemyLayerNumber = 9;
-
         void Start()
         {
             cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
@@ -28,27 +24,24 @@ namespace RPG.Characters
             aiCharacterControl = GetComponent<AICharacterControl>();
             walkTarget = new GameObject("walkTarget");
 
-            cameraRaycaster.notifyMouseClickObservers += ProcessMouseClick;
+            cameraRaycaster.onMouseOverPotentiallyWalkable += OnMouseOverPotentiallyWalkable;
+            cameraRaycaster.onMouseOverEnemy += OnMouseOverEnemy;
         }
 
-
-        void ProcessMouseClick(RaycastHit raycastHit, int layerHit)
+        void OnMouseOverPotentiallyWalkable(Vector3 destination)
         {
-            switch (layerHit)
+            if(Input.GetMouseButton(0))
             {
-                case enemyLayerNumber:
-                    // navigate to the enemy
-                    GameObject enemy = raycastHit.collider.gameObject;
-                    aiCharacterControl.SetTarget(enemy.transform);
-                    break;
-                case walkableLayerNumber:
-                    // navigate to point on the ground
-                    walkTarget.transform.position = raycastHit.point;
-                    aiCharacterControl.SetTarget(walkTarget.transform);
-                    break;
-                default:
-                    Debug.LogWarning("Don't know how to handle mouse click for player movement");
-                    return;
+                walkTarget.transform.position = destination;
+                aiCharacterControl.SetTarget(walkTarget.transform);
+            }
+        }
+
+        void OnMouseOverEnemy(Enemy enemy)
+        {
+            if(Input.GetMouseButton(0) || Input.GetMouseButtonDown(1))
+            {
+                aiCharacterControl.SetTarget(enemy.transform);
             }
         }
 
