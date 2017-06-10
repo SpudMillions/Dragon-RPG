@@ -25,9 +25,10 @@ namespace RPG.Characters
 
         }
 
-        public void Use()
+        public void Use(AbilityUseParams useParams)
         {
-
+            float damageToDeal = useParams.baseDamage + config.GetExtradamage();
+            useParams.target.TakeDamage(damageToDeal);
         }
     }
 }
