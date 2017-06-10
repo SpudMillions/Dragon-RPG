@@ -7359,7 +7359,7 @@ Prefab:
     - target: {fileID: 114633348878164724, guid: 7737647c22c1fc64a88d5cd030c352ce,
         type: 2}
       propertyPath: abilities.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 408730, guid: 7737647c22c1fc64a88d5cd030c352ce, type: 2}
       propertyPath: m_LocalPosition.x
@@ -7402,6 +7402,12 @@ Prefab:
     - target: {fileID: 114633348878164724, guid: 7737647c22c1fc64a88d5cd030c352ce,
         type: 2}
       propertyPath: abilities.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7f548d2f0ba85da4ba2b482ed1abb3c1,
+        type: 2}
+    - target: {fileID: 114633348878164724, guid: 7737647c22c1fc64a88d5cd030c352ce,
+        type: 2}
+      propertyPath: abilities.Array.data[1]
       value: 
       objectReference: {fileID: 11400000, guid: 708bc554c33361e49b5057ee097813de,
         type: 2}
