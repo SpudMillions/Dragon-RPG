@@ -7388,6 +7388,12 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114633348878164724, guid: 7737647c22c1fc64a88d5cd030c352ce,
+        type: 2}
+      propertyPath: ability1
+      value: 
+      objectReference: {fileID: 11400000, guid: 708bc554c33361e49b5057ee097813de,
+        type: 2}
     m_RemovedComponents:
     - {fileID: 114332769641294510, guid: 7737647c22c1fc64a88d5cd030c352ce, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 7737647c22c1fc64a88d5cd030c352ce, type: 2}
@@ -10200,7 +10206,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   energyBar: {fileID: 217507261}
   maxEnergyPoints: 100
-  pointsPerHit: 10
 --- !u!1001 &1231643141
 Prefab:
   m_ObjectHideFlags: 0
