@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 
-// TODO change to RPG.Characters namespace
 namespace RPG.Characters
 {
     [RequireComponent(typeof (UnityEngine.AI.NavMeshAgent))]
@@ -27,9 +26,8 @@ namespace RPG.Characters
         private void Update()
         {
             if (target != null)
-            {
                 agent.SetDestination(target.position);
-            }
+
             if (agent.remainingDistance > agent.stoppingDistance)
             {
                 character.Move(agent.desiredVelocity, false, false);
@@ -42,7 +40,6 @@ namespace RPG.Characters
                 }
                 character.Move(Vector3.zero, false, false);
             }
-                
         }
 
 

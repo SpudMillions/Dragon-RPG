@@ -1,8 +1,9 @@
-﻿using System;
+﻿﻿﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 
 // TODO consider re-wire...
 using RPG.CameraUI;
@@ -15,12 +16,18 @@ namespace RPG.Characters
     {
         [SerializeField] float maxHealthPoints = 100f;
         [SerializeField] float baseDamage = 10f;
-        [SerializeField] Weapon weaponInUse;
-        [SerializeField] AnimatorOverrideController animatorOverrideController;
+        [SerializeField] Weapon weaponInUse = null;
+        [SerializeField] AnimatorOverrideController animatorOverrideController = null;
+        [SerializeField] AudioClip[] damageSounds;
+        [SerializeField] AudioClip[] deathSounds;
 
-        //temp serialize for debug
+        // Temporarily serialized for dubbing
         [SerializeField] SpecialAbility[] abilities;
 
+        const string DEATH_TRIGGER = "Death";
+        const string ATTACK_TRIGGER = "Attack";
+
+        AudioSource audioSource;
         Animator animator;
         float currentHealthPoints;
         CameraRaycaster cameraRaycaster;
@@ -34,12 +41,36 @@ namespace RPG.Characters
             SetCurrentMaxHealth();
             PutWeaponInHand();
             SetupRuntimeAnimator();
-            abilities[0].AttackComponentTo(gameObject);
+            abilities[0].AttachComponentTo(gameObject);
+            audioSource = GetComponent<AudioSource>();
         }
 
         public void TakeDamage(float damage)
         {
+			bool playerDies = (currentHealthPoints - damage <= 0); // must ask before reducing health
+            ReduceHealth(damage);          
+            if (playerDies)
+            {
+                StartCoroutine(KillPlayer());
+            }
+        }
+
+        IEnumerator KillPlayer()
+        {
+			animator.SetTrigger(DEATH_TRIGGER);
+
+            audioSource.clip = deathSounds[UnityEngine.Random.Range(0, deathSounds.Length)];
+			audioSource.Play();
+            yield return new WaitForSecondsRealtime(audioSource.clip.length);
+
+            SceneManager.LoadScene(0);
+		}
+
+        private void ReduceHealth(float damage)
+        {
             currentHealthPoints = Mathf.Clamp(currentHealthPoints - damage, 0f, maxHealthPoints);
+			audioSource.clip = damageSounds[UnityEngine.Random.Range(0, damageSounds.Length)];
+			audioSource.Play();
         }
 
         private void SetCurrentMaxHealth()
@@ -74,18 +105,17 @@ namespace RPG.Characters
 
         private void RegisterForMouseClick()
         {
-            cameraRaycaster = FindObjectOfType<CameraRaycaster>();
+            cameraRaycaster = FindObjectOfType<CameraUI.CameraRaycaster>();
             cameraRaycaster.onMouseOverEnemy += OnMouseOverEnemy;
         }
 
         void OnMouseOverEnemy(Enemy enemy)
         {
-            if(Input.GetMouseButton(0) && IsTargetInRange(enemy.gameObject))
+            if (Input.GetMouseButton(0) && IsTargetInRange(enemy.gameObject))
             {
                 AttackTarget(enemy);
             }
-
-            else if(Input.GetMouseButtonDown(1))
+            else if (Input.GetMouseButtonDown(1))
             {
                 AttemptSpecialAbility(0, enemy);
             }
@@ -95,10 +125,10 @@ namespace RPG.Characters
         {
             var energyComponent = GetComponent<Energy>();
             var energyCost = abilities[abilityIndex].GetEnergyCost();
+
             if (energyComponent.IsEnergyAvailable(energyCost))
             {
                 energyComponent.ConsumeEnergy(energyCost);
-                //use the ability
                 var abilityParams = new AbilityUseParams(enemy, baseDamage);
                 abilities[abilityIndex].Use(abilityParams);
             }
@@ -108,7 +138,7 @@ namespace RPG.Characters
         {
             if (Time.time - lastHitTime > weaponInUse.GetMinTimeBetweenHits())
             {
-                animator.SetTrigger("Attack"); // TODO make const
+                animator.SetTrigger(ATTACK_TRIGGER);
                 enemy.TakeDamage(baseDamage);
                 lastHitTime = Time.time;
             }

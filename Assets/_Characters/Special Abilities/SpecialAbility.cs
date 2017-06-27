@@ -19,12 +19,12 @@ namespace RPG.Characters
 
     public abstract class SpecialAbility : ScriptableObject
     {
-        [Header("Special Ability General")]
+        [Header("Spcial Ability General")]
         [SerializeField] float energyCost = 10f;
 
         protected ISpecialAbility behaviour;
 
-        abstract public void AttackComponentTo(GameObject gameObjectToattachTo);
+        abstract public void AttachComponentTo(GameObject gameObjectToattachTo);
 
         public void Use(AbilityUseParams useParams)
         {
@@ -37,8 +37,8 @@ namespace RPG.Characters
         }
     }
 
-    public interface ISpecialAbility
-    {
-        void Use(AbilityUseParams useParams);
-    }
+	public interface ISpecialAbility
+	{
+		void Use(AbilityUseParams useParams);
+	}
 }
